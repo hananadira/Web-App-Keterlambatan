@@ -51,7 +51,7 @@ class StudentController extends Controller
             'rombel_id'=>'required',
             'rayon_id'=>'required',
         ],
-        [
+         [
             'nis.required' => 'nis siswa harus diisi',
             'name.required' => 'nama siswa harus diisi',
             'rombel_id.required' => 'rombel harus dipilih',

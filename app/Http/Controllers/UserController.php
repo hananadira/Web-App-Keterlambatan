@@ -36,12 +36,31 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|min:3',
+    //         'email' => 'required',
+    //         'password' => 'required',
+    //     ]);
+
+    //     User::create([
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'role' => $request->role,
+    //         'password' => Hash::make(substr($request->email, 0, 3). substr($request->name, 0, 3))
+    //     ]);
+
+    //     return redirect()->route('user.index')->with('success', 'Berhasil menambahkan data pengguna!');
+    // }
+
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|min:3',
-            'email' => 'required',
-            'password' => 'required',
+            'email' => 'required|email|unique:users,email', // Memastikan email unik
+            'password' => 'required|min:8',
+            'role' => 'required',
         ]);
 
         User::create([
@@ -87,25 +106,24 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|min:3',
+            'name' => 'required|min:3',
+            'email' => 'required|email|min:3|unique:users,email,' . $id, // Memastikan email unik, kecuali untuk user saat ini
             'role' => 'required',
-            'password' => 'nullable|min:8', // Menambahkan validasi untuk password (opsional, minimal 8 karakter)
+            'password' => 'nullable|min:8',
         ]);
-
+    
         $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
         ];
-
-        // Hanya meng-update password jika password tidak kosong
+    
         if ($request->filled('password')) {
             $userData['password'] = Hash::make($request->password);
         }
-
+    
         User::where('id', $id)->update($userData);
-
+    
         return redirect()->route('user.index')->with('success', 'Berhasil mengubah data!');
     }
 
@@ -116,12 +134,6 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function destroy($id)
-    // {
-    //     User::where('id', $id)->delete();
-
-    //     return redirect()->back()->with('deleted', 'Berhasil menghapus data !');
-    // }
 
     public function destroy($id)
     {
@@ -146,21 +158,22 @@ class UserController extends Controller
 
     public function loginAuth(Request $request) {
         $request->validate([
-            'email' => 'required',
-            'password' => 'required|alpha_dash',
-        ], [
-            'email.required' => 'Email harus diisi',
-            'email.email' => 'Email tidak valid',
-            'password.required' => 'Password harus diisi',
-            'password.alpha_dash' => 'Password harus berisi huruf dan karakter tanpa spasi'
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
-
-        $user = $request->only(['email', 'password']);
-        if (Auth::attempt($user)) {
-            return redirect()->route('home');
-        } else {
-            return redirect()->back()->with('failed', 'Proses login gagal, silahkan coba kembali dengan data yang benar!');
+    
+        $credentials = $request->only('email', 'password');
+    
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            if ($user->role === 'admin') {
+                return redirect()->route('home');
+            } elseif ($user->role === 'ps') {
+                return redirect()->route('dashboardps');
+            }
         }
+    
+        return redirect()->back()->with('failed', 'Proses login gagal, silahkan coba kembali dengan data yang benar!');
     }
 
     public function logout() {

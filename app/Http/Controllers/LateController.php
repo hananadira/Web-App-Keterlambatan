@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\Models\Late;
 use App\Models\Student;
 use Barryvdh\DomPDF\PDF;
@@ -179,40 +180,53 @@ class LateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    
+     public function update(Request $request, $id)
     {
+        $lates = Late::find($id);
         $request->validate([
             'name_id' => 'required',
             'date_time_late' => 'required',
             'information' => 'required',
-            'bukti' => 'sometimes|required_without:name_id,date_time_late,information|mimes:png,jpg,jpeg|max:2048',
-        ]);        
+        ]);
     
-        // Mengambil data terlambat berdasarkan ID
-        $lates = Late::findOrFail($id);
-    
-        $lateData = [
-            'name_id' => $request->name_id,
-            'date_time_late' => $request->date_time_late,
-            'information' => $request->information,
-        ];
-    
-        if ($request->hasFile('bukti') && $request->file('bukti')->isValid()) {
-            if ($lates->bukti) {
-                Storage::disk('public')->delete($lates->bukti);
-            }
-    
-            $file = $request->file('bukti');
-            $path = $file->store('photouser', 'public');
-    
-            $lateData['bukti'] = $path;
-        }
-    
-        $lates->update($lateData);
-    
+        $lates->name_id = $request->name_id;
+        $lates->date_time_late = $request->date_time_late;
+        $lates->information = $request->information;
 
-        return redirect()->route('late.index')->with('success', 'Berhasil mengubah data!');
+        // Menyimpan nama file lama untuk kemungkinan penghapusan setelah update
+        $oldImage = $lates->bukti;
+
+        if ($request->hasFile('bukti')) {
+            $request->validate([
+                'bukti' => 'image|mimes:jpeg,png,jpg,gif',
+            ]);
+
+            // Membuat nama file baru dengan timestamp unik
+            $imageName = time() . '.' . $request->bukti->extension();
+
+            // Menyimpan file baru ke direktori penyimpanan menggunakan Storage Laravel
+            Storage::putFileAs(public_path('img'), $request->file('bukti'), $imageName);
+            
+            // Memperbarui nama file pada model
+            $lates->bukti = $imageName;
+
+            // Hapus file lama jika berhasil mengunggah file baru
+            if ($oldImage && Storage::exists('public/img/' . $oldImage)) {
+                Storage::delete('public/img/' . $oldImage);
+            }
+        }
+        
+        // Menyimpan perubahan pada model Late
+        $lates->save();
+
+        // Logging untuk melacak proses
+        Log::info('Data Late yang diubah:', $lates->toArray());
+        
+        return redirect()->route('late.index')->with('success', 'Berhasil mengubah data keterlambatan!');
     }
+
+
 
     /**
      * Remove the specified resource from storage.

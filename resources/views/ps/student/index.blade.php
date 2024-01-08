@@ -14,7 +14,6 @@
         <h2>Data Siswa</h2>
         <p><a href="{{ route('dashboardps') }}">Home</a> / <a href="{{ route('ps.student.index.ps') }}">Data Siswa</a></p>
     </div>
-    {{-- <table class="table table-striped table-bordered table-hover"> --}}
         <table id="example" class="table table-striped" style="width:100%">
         <thead>
             <tr>

@@ -36,7 +36,6 @@
                     <option selected disabled hidden>Pilih</option>
                     @foreach($rombel as $item)
                     <option value="{{ $item->id }}" @if($students->rombel_id == $item->id) selected @endif>{{ $item->rombel }}</option>
-                     {{-- <option value="{{ $item->id }}">{{ $item->rombel }}</option> --}}
                     @endforeach
                 </select>
             </div>
@@ -48,7 +47,6 @@
                     <option selected disabled hidden>Pilih</option>
                     @foreach($rayon as $item)
                     <option value="{{ $item->id }}" @if($students->rayon_id == $item->id) selected @endif>{{ $item->rayon }}</option>
-                    {{-- <option value="{{ $item->id }}">{{ $item->rayon }}</option> --}}
                     @endforeach
                 </select>
             </div>

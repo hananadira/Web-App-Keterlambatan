@@ -7,7 +7,6 @@
 </div>
     <form action="{{ route('student.student.store') }}" method="POST" class="card p-5">
         @csrf
-        {{-- @method('PATCH') --}}
 
         @if ($errors->any())
             <ul class="alert alert-danger p-3">

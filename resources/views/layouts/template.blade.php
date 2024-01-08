@@ -177,8 +177,6 @@ a.sidebar-link {
                 <div class="sidebar-logo">
                     <a href="{{ route('dashboard') }}">Rekam Keterlambatan</a>
                 </div>
-                {{-- @if (Auth::check())
-                @if (Auth::user()->role == "admin") --}}
                 <ul class="sidebar-nav pe-md-0"> 
                     @if (Auth::check())
                     @if (Auth::user()->role == "admin")
@@ -285,7 +283,6 @@ a.sidebar-link {
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
-                                {{-- <img src="" class="avatar img-fluid rounded" alt="gambar"> --}}
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
                                     <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
                                   </svg>{{ Auth::user()->name }}
@@ -301,17 +298,10 @@ a.sidebar-link {
             </div>
             @endif
             <div class="container mt-5">
-                {{-- <div class="card-title">
-                    <h4>Dasboard</h4>
-                    <p>{{ $title }}</p>
-                </div> --}}
-            {{-- </div> --}}
-            {{-- @endif  --}}
             <div class="container mt-5">
                 @yield('content')
             </div> 
         </div>
-        {{-- @endif --}}
     </div>
  
     

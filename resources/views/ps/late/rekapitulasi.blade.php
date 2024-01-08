@@ -25,7 +25,6 @@
             </li>
         </ul>
 
-        {{-- <table class="table table-striped table-bordered table-hover"> --}}
         <table id="example" class="table table-striped" style="width:100%">
             <thead>
                 <tr>

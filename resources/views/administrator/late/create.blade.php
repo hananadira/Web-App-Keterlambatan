@@ -39,8 +39,12 @@
                 
         <div class="mb-3 row">
             <label for="date_time_late" class="col-sm-2 col-form-label">Tanggal :</label>
+            @php
+            use Carbon\Carbon;
+            $waktu_wib = Carbon::now('Asia/Jakarta')->format('Y-m-d\TH:i:s');
+            @endphp
                 <input type="datetime-local" name="date_time_late" id="date_time_late" class="form-control" required
-                       value="{{ date('Y-m-d\TH:i:s', strtotime('now')) }}">
+                       value="{{ $waktu_wib }}">
         </div>
         <div class="mb-3 row">
             <label for="information" class="col-sm-2 col-form-label">Keterangan Keterlambatan :</label>
